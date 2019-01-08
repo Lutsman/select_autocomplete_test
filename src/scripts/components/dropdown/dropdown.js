@@ -14,7 +14,7 @@ export class Dropdown {
             outerWrapper: 'dropdown__outer-wrapper',
             innerWrapper: 'dropdown__inner-wrapper',
             label: 'dropdown__label',
-            activeBtn: 'dropdown_active-btn',
+            activeList: 'dropdown_selected',
             openBtn: 'dropdown__open-btn',
             resetBtn: 'dropdown__reset-btn',
             list: 'dropdown__list',
@@ -115,9 +115,8 @@ export class Dropdown {
     }
 
     showList(ms) {
-        this.setListPosition();
         return new Promise(resolve => {
-            this.setListPosition();
+            // this.setListPosition();
             this.$list.fadeIn(ms || 100, () => {
                 if (!this.isOuterClickHandled) {
                     this.$body.on('click', this.outerClickHandler);
@@ -157,7 +156,7 @@ export class Dropdown {
             return;
         }
 
-        if ($target.closest(this.$openBtn).length) {
+        if ($target.closest(this.$label).length) {
             if (this.isShownList) {
                 this.hideList();
             } else {
@@ -324,6 +323,7 @@ export class Dropdown {
     reset() {
         this.activeField = null;
         this.changeLabel(null);
+        this.fillUpList();
     }
 
     start() {
