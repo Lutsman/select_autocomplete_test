@@ -176,7 +176,8 @@ export class Dropdown {
         }
     };
 
-    listClickHandler = () => {
+    listClickHandler = e => {
+        const $target = $(e.target);
         const $li = $target.closest(this.$listItems);
 
         this.set($li.text());
