@@ -42,6 +42,9 @@ export class Dropdown {
 
         this.isWorking = true;
         this.$dropdown.trigger(this.events.init, {controller: this});
+        if (this.$select) {
+            this.$select.trigger(this.events.init, {controller: this});
+        }
     }
 
     bindElements() {
@@ -121,11 +124,15 @@ export class Dropdown {
     }
 
     setListPosition() {
-        const innerWrapperPos = this.getPosition(this.$dropdown);
+        const dropdownPos = this.getPosition(this.$dropdown);
+        const maxHeight = this.getMaxHeight(dropdownPos.bottom);
+        const minWidth = this.$dropdown.width();
 
         this.$list.css({
-            top: innerWrapperPos.bottom,
-            left: innerWrapperPos.left,
+            top: dropdownPos.bottom,
+            left: dropdownPos.left,
+            maxHeight: maxHeight + 'px',
+            minWidth: minWidth + 'px',
         });
     }
 
@@ -139,6 +146,10 @@ export class Dropdown {
                 }
                 this.$dropdown.addClass(this.classNames.active);
                 this.isShownList = true;
+                this.$dropdown.trigger(this.events.listShown, {controller: this});
+                if (this.$select) {
+                    this.$select.trigger(this.events.listShown, {controller: this});
+                }
                 resolve();
             });
         });
@@ -154,6 +165,10 @@ export class Dropdown {
             this.$list.fadeOut(ms || 100, () => {
                 this.$dropdown.removeClass(this.classNames.active);
                 this.isShownList = false;
+                this.$dropdown.trigger(this.events.listHidden, {controller: this});
+                if (this.$select) {
+                    this.$select.trigger(this.events.listHidden, {controller: this});
+                }
                 resolve();
             });
         });
@@ -194,17 +209,6 @@ export class Dropdown {
         this.$body.off('click', this.outerClickHandler);
         this.isOuterClickHandled = false;
     };
-
-    getPosition($el) {
-        const box = $el.offset();
-
-        return {
-            top: box.top,
-            bottom: box.top + $el.height(),
-            left: box.left,
-            right: box.left + $el.width(),
-        };
-    }
 
     getFields() {
         let fields = null;
@@ -271,8 +275,30 @@ export class Dropdown {
         return processedFields;
     }
 
-    changeLabel(val) {
-        this.$label.text(val);
+    changeLabel(text) {
+        this.$label.text(text);
+        this.$dropdown.addClass(this.classNames.selected);
+        this.$dropdown.trigger(this.events.change, {field: this.activeField});
+        if (this.$select) {
+            this.$select[0].value = text;
+            this.$select.trigger(this.events.change, {field: this.activeField});
+        }
+    }
+
+    getPosition($el) {
+        const box = $el.offset();
+
+        return {
+            top: box.top,
+            bottom: box.top + $el.height(),
+            left: box.left,
+            right: box.left + $el.width(),
+        };
+    }
+
+    getMaxHeight(top) {
+        const $win = $(window);
+        return $win.height() - top - $win.scrollTop();
     }
 
     isNumeric(n) {
@@ -287,6 +313,13 @@ export class Dropdown {
         fields.push(newField);
         this.fields = this.sortFields(fields);
         this.fillUpList();
+
+        if(this.$select) {
+            const select = this.$select[0];
+            const option = `<option value="${newField.value}">${newField.label}</option>`;
+
+            select.add(option);
+        }
     }
 
     remove(label) {
@@ -301,6 +334,21 @@ export class Dropdown {
         }
 
         this.fields = processedFields;
+
+        if(this.$select) {
+            const select = this.$select[0];
+            let index = null;
+
+            for(let i = 0; i < select.length; i++) {
+                if (select[i] !== label) continue;
+
+                index = i;
+            }
+
+            if (index === null) return;
+
+            select.remove(index);
+        }
     }
 
     set(val) {
@@ -309,8 +357,8 @@ export class Dropdown {
         if (typeof val === 'object') {
             if ('label' in val && 'value' in val) return;
 
-            this.activeField = val;
-            this.changeLabel(val.label);
+            this.add(val);
+            this.set(val.label);
         } else if (typeof val === 'string') {
             const activeField = this.fields.filter(item => item.label === val)[0];
             if (!activeField) return;
@@ -324,7 +372,6 @@ export class Dropdown {
             this.changeLabel(this.activeField.label);
         }
 
-        this.$dropdown.addClass(this.classNames.selected);
         this.fillUpList();
     }
 
@@ -350,6 +397,9 @@ export class Dropdown {
         this.attachHandlers();
         this.isWorking = true;
         this.$dropdown.trigger(this.events.start, {controller: this});
+        if (this.$select) {
+            this.$select.trigger(this.events.start, {controller: this});
+        }
     }
 
     stop() {
@@ -360,6 +410,9 @@ export class Dropdown {
             .then(() => {
                 this.isWorking = false;
                 this.$dropdown.trigger(this.events.stop, {controller: this});
+                if (this.$select) {
+                    this.$select.trigger(this.events.stop, {controller: this});
+                }
             });
     }
 
@@ -371,6 +424,9 @@ export class Dropdown {
                 this.removeDropdown();
                 this.isDestroyed = true;
                 this.$dropdown.trigger(this.events.destroy, {controller: this});
+                if (this.$select) {
+                    this.$select.trigger(this.events.destroy, {controller: this});
+                }
             });
     }
 }

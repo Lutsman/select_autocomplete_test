@@ -17,14 +17,14 @@
 <body>
 <div class="uk-section">
     <div class="uk-container">
-        <div>
+        <div class="autocomplete">
             <div class="uk-flex uk-flex-center uk-margin-bottom uk-margin-top">
                 <form action="" class="uk-search uk-search-default">
                     <span uk-search-icon></span>
                     <input class="search-input uk-search-input" type="search">
                 </form>
             </div>
-            <div class="uk-flex uk-flex-wrap uk-flex-center" uk-margin>
+            <div class="uk-flex uk-flex-center">
                 <button class="start-btn uk-button uk-button-default">start</button>
                 <button class="stop-btn uk-button uk-button-default">stop</button>
                 <button class="destroy-btn uk-button uk-button-default">destroy</button>
@@ -50,13 +50,31 @@
             </p>
         </div>
 
-        <div uk-margin>
-            <div class="dropdown-div"></div>
-            <select class="dropdown-select">
+        <div class="dropdown-div">
+            <div class="target"></div>
+
+            <button class="start-btn uk-button uk-button-default">start</button>
+            <button class="stop-btn uk-button uk-button-default">stop</button>
+            <button class="destroy-btn uk-button uk-button-default">destroy</button>
+            <input type="text" class="set-input-label uk-input uk-form-width-medium" placeholder="label">
+            <input type="text" class="set-input-value uk-input uk-form-width-medium" placeholder="value">
+            <button class="set-btn uk-button uk-button-default">set</button>
+            <button class="get-btn uk-button uk-button-default">get</button>
+        </div>
+        <div class="dropdown-select">
+            <select class="target">
                 <option value="0">zero</option>
                 <option value="1">one</option>
                 <option value="2">two</option>
             </select>
+
+            <button class="start-btn uk-button uk-button-default">start</button>
+            <button class="stop-btn uk-button uk-button-default">stop</button>
+            <button class="destroy-btn uk-button uk-button-default">destroy</button>
+            <input type="text" class="set-input-label uk-input uk-form-width-medium" placeholder="label">
+            <input type="text" class="set-input-value uk-input uk-form-width-medium" placeholder="value">
+            <button class="set-btn uk-button uk-button-default">set</button>
+            <button class="select-get-btn uk-button uk-button-default">get</button>
         </div>
     </div>
 </div>

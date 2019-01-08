@@ -18,11 +18,13 @@ export class Autocomplete {
             list: 'autocomplete__list',
         };
         this.events = {
-            init: 'searchAutocomplete:init',
-            start: 'searchAutocomplete:start',
-            stop: 'searchAutocomplete:stop',
-            destroy: 'searchAutocomplete:destroy',
-            change: 'searchAutocomplete:change',
+            init: 'autocomplete:init',
+            start: 'autocomplete:start',
+            stop: 'autocomplete:stop',
+            destroy: 'autocomplete:destroy',
+            change: 'autocomplete:change',
+            listShown: 'autocomplete:list:shown',
+            listHidden: 'autocomplete:list:hidden',
         };
 
         this.init();
@@ -56,9 +58,7 @@ export class Autocomplete {
 
     renderList() {
         this.$autocompleteList = $(`<ul class="${this.classNames.list}"></ul>`);
-        this.$autocompleteList
-            .appendTo(this.$body)
-            .hide();
+        this.$body.append(this.$autocompleteList);
     }
 
     fillUpList(words) {
@@ -74,19 +74,23 @@ export class Autocomplete {
 
     setListPosition() {
         const inputPos = this.getPosition(this.$searchInput);
+        const maxHeight = this.getMaxHeight(inputPos.bottom);
+        const minWidth = this.$searchInput.width();
 
         this.$autocompleteList.css({
             top: inputPos.bottom,
             left: inputPos.left,
+            maxHeight: maxHeight + 'px',
+            minWidth: minWidth + 'px',
         });
     }
 
     showList(ms) {
-        this.setListPosition();
         return new Promise(resolve => {
             this.$autocompleteList.fadeIn(ms || 100, () => {
                 this.setListPosition();
                 this.isShownList = true;
+                this.$searchInput.trigger(this.events.listShown, {controller: this});
                 resolve();
             });
         });
@@ -96,6 +100,7 @@ export class Autocomplete {
         return new Promise(resolve => {
             this.$autocompleteList.fadeOut(ms || 100, () => {
                 this.isShownList = false;
+                this.$searchInput.trigger(this.events.listHidden, {controller: this});
                 resolve();
             });
         });
@@ -167,6 +172,11 @@ export class Autocomplete {
             left: box.left,
             right: box.left + $el.width(),
         };
+    }
+
+    getMaxHeight(top) {
+        const $win = $(window);
+        return $win.height() - top - $win.scrollTop();
     }
 
     getFormatedData() {

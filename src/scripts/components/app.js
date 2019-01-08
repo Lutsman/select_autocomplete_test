@@ -8,44 +8,69 @@ $(function() {
 
     // autocomplete
     (function () {
-        const $input = $('.search-input');
-        const searchAutocomplete = new Autocomplete({
+        const $wrapper = $('.autocomplete');
+        const $input = $wrapper.find('.search-input');
+        const autocomplete = new Autocomplete({
             searchInput: $input,
-            getData: () => $('.search-text').text(),
+            getData: () => $wrapper.find('.search-text').text(),
         });
-        const $startBtn = $('.start-btn');
-        const $stopBtn = $('.stop-btn');
-        const $destroyBtn = $('.destroy-btn');
-        const $setBtn = $('.set-btn');
-        const $setInput = $('.set-input');
-        const $getBtn = $('.get-btn');
+        const $startBtn = $wrapper.find('.start-btn');
+        const $stopBtn = $wrapper.find('.stop-btn');
+        const $destroyBtn = $wrapper.find('.destroy-btn');
+        const $setBtn = $wrapper.find('.set-btn');
+        const $setInput = $wrapper.find('.set-input');
+        const $getBtn = $wrapper.find('.get-btn');
 
-        $startBtn.on('click', () => searchAutocomplete.start());
-        $stopBtn.on('click', () => searchAutocomplete.stop());
-        $destroyBtn.on('click', () => searchAutocomplete.destroy());
-        $setBtn.on('click', () => searchAutocomplete.set($setInput.val()));
-        $getBtn.on('click', () => console.log(searchAutocomplete.get()));
+        $startBtn.on('click', () => autocomplete.start());
+        $stopBtn.on('click', () => autocomplete.stop());
+        $destroyBtn.on('click', () => autocomplete.destroy());
+        $setBtn.on('click', () => autocomplete.set($setInput.val()));
+        $getBtn.on('click', () => console.log(autocomplete.get()));
 
-        console.dir($);
+        console.dir(autocomplete);
 
         $input.on({
-            'searchAutocomplete:init': () => console.log('init'),
-            'searchAutocomplete:start': () => console.log('start'),
-            'searchAutocomplete:stop': () => console.log('stop'),
-            'searchAutocomplete:destroy': () => console.log('destroy'),
-            'searchAutocomplete:change': (e, val) => console.log('change', val),
+            'autocomplete:init': () => console.log('init'),
+            'autocomplete:start': () => console.log('start'),
+            'autocomplete:stop': () => console.log('stop'),
+            'autocomplete:destroy': () => console.log('destroy'),
+            'autocomplete:change': (e, val) => console.log('change', val),
         });
     })();
 
     // dropdown div
     (function () {
+        const $wrapper = $('.dropdown-div');
+        const $target = $wrapper.find('.target');
         const dropdown = new Dropdown({
-            parent: '.dropdown-div',
+            parent: $target,
             fields: [
                 {label: 'hello', value: 0},
                 {label: 'buy', value: 1},
                 {label: 'bon appetite', value: 2},
             ],
+        });
+        const $startBtn = $wrapper.find('.start-btn');
+        const $stopBtn = $wrapper.find('.stop-btn');
+        const $destroyBtn = $wrapper.find('.destroy-btn');
+        const $setBtn = $wrapper.find('.set-btn');
+        const $setInput = $wrapper.find('.set-input');
+        const $getBtn = $wrapper.find('.get-btn');
+
+        $startBtn.on('click', () => dropdown.start());
+        $stopBtn.on('click', () => dropdown.stop());
+        $destroyBtn.on('click', () => dropdown.destroy());
+        $setBtn.on('click', () => dropdown.set($setInput.val()));
+        $getBtn.on('click', () => console.log(dropdown.get()));
+
+        $target.on({
+            'autocomplete:init': () => console.log('init'),
+            'autocomplete:start': () => console.log('start'),
+            'autocomplete:stop': () => console.log('stop'),
+            'autocomplete:destroy': () => console.log('destroy'),
+            'autocomplete:change': (e, val) => console.log('change', val),
+            'autocomplete:list:shown': () => console.log('list shown'),
+            'autocomplete:list:hidden': () => console.log('list hidden'),
         });
 
         console.dir(dropdown);
@@ -53,9 +78,23 @@ $(function() {
 
     //dropdown select
     (function () {
+        const $wrapper = $('.dropdown-select');
+        const $target = $wrapper.find('.target');
         const dropdown = new Dropdown({
-            parent: '.dropdown-select',
+            parent: $target,
         });
+        const $startBtn = $wrapper.find('.start-btn');
+        const $stopBtn = $wrapper.find('.stop-btn');
+        const $destroyBtn = $wrapper.find('.destroy-btn');
+        const $setBtn = $wrapper.find('.set-btn');
+        const $setInput = $wrapper.find('.set-input');
+        const $getBtn = $wrapper.find('.get-btn');
+
+        $startBtn.on('click', () => dropdown.start());
+        $stopBtn.on('click', () => dropdown.stop());
+        $destroyBtn.on('click', () => dropdown.destroy());
+        $setBtn.on('click', () => dropdown.set($setInput.val()));
+        $getBtn.on('click', () => console.log(dropdown.get()));
 
         console.dir(dropdown);
     })();
