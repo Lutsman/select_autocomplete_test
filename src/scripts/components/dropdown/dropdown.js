@@ -381,8 +381,8 @@ export class Dropdown {
 
     reset() {
         this.activeField = null;
-        this.$dropdown.removeClass(this.classNames.selected);
         this.changeLabel(null);
+        this.$dropdown.removeClass(this.classNames.selected);
         this.fillUpList();
     }
 
