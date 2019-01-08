@@ -24,7 +24,7 @@
                     <input class="search-input uk-search-input" type="search">
                 </form>
             </div>
-            <div class="uk-flex uk-flex-center">
+            <div class="uk-flex uk-flex-wrap uk-flex-center" uk-margin>
                 <button class="start-btn uk-button uk-button-default">start</button>
                 <button class="stop-btn uk-button uk-button-default">stop</button>
                 <button class="destroy-btn uk-button uk-button-default">destroy</button>
@@ -50,7 +50,7 @@
             </p>
         </div>
 
-        <div class="dropdown-div">
+        <div class="dropdown-div uk-margin" uk-margin>
             <div class="target"></div>
 
             <button class="start-btn uk-button uk-button-default">start</button>
@@ -61,12 +61,15 @@
             <button class="set-btn uk-button uk-button-default">set</button>
             <button class="get-btn uk-button uk-button-default">get</button>
         </div>
-        <div class="dropdown-select">
-            <select class="target">
-                <option value="0">zero</option>
-                <option value="1">one</option>
-                <option value="2">two</option>
-            </select>
+
+        <div class="dropdown-select uk-margin" uk-margin>
+            <div>
+                <select class="target">
+                    <option value="0">zero</option>
+                    <option value="1">one</option>
+                    <option value="2">two</option>
+                </select>
+            </div>
 
             <button class="start-btn uk-button uk-button-default">start</button>
             <button class="stop-btn uk-button uk-button-default">stop</button>
