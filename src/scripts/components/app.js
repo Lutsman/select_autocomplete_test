@@ -37,23 +37,26 @@ $(function() {
         });
     })();
 
-    // dropdown
+    // dropdown div
     (function () {
-        const $div = $('.dropdown-div');
-        const $select = $('.dropdown-select');
-        const dropdownDiv = new Dropdown({
-            parent: $div,
+        const dropdown = new Dropdown({
+            parent: '.dropdown-div',
             fields: [
                 {label: 'hello', value: 0},
                 {label: 'buy', value: 1},
                 {label: 'bon appetite', value: 2},
             ],
         });
-        const dropdownSelect = new Dropdown({
-            parent: $select,
+
+        console.dir(dropdown);
+    })();
+
+    //dropdown select
+    (function () {
+        const dropdown = new Dropdown({
+            parent: '.dropdown-select',
         });
 
-        console.dir(dropdownDiv);
-        console.dir(dropdownSelect);
+        console.dir(dropdown);
     })();
 });
