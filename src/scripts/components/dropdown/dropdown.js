@@ -15,7 +15,8 @@ export class Dropdown {
         this.classNames = {
             dropdown: 'dropdown__wrapper',
             label: 'dropdown__label',
-            active: 'dropdown__active',
+            active: 'dropdown__list-active',
+            selected: 'dropdown__selected',
             resetBtn: 'dropdown__reset-btn',
             list: 'dropdown__list',
         };
@@ -322,6 +323,7 @@ export class Dropdown {
             this.changeLabel(this.activeField.label);
         }
 
+        this.$dropdown.addClass(this.classNames.selected);
         this.fillUpList();
     }
 
@@ -331,6 +333,7 @@ export class Dropdown {
 
     reset() {
         this.activeField = null;
+        this.$dropdown.removeClass(this.classNames.selected);
         this.changeLabel(null);
         this.fillUpList();
     }
