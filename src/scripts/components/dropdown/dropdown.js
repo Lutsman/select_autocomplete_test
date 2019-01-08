@@ -15,7 +15,8 @@ export class Dropdown {
         this.classNames = {
             dropdown: 'dropdown__wrapper',
             label: 'dropdown__label',
-            active: 'dropdown__active',
+            active: 'dropdown__list-active',
+            selected: 'dropdown__selected',
             resetBtn: 'dropdown__reset-btn',
             list: 'dropdown__list',
         };
@@ -50,11 +51,13 @@ export class Dropdown {
     }
 
     attachHandlers() {
-        this.$dropdown.on('click', this.clickHandler);
+        this.$dropdown.on('click', this.dropdownClickHandler);
+        this.$list.on('click', this.listClickHandler);
     }
 
     detachHandlers() {
-        this.$dropdown.off('click', this.clickHandler);
+        this.$dropdown.off('click', this.dropdownClickHandler);
+        this.$list.off('click', this.listClickHandler);
         this.$body.off('click', this.outerClickHandler);
     }
 
@@ -156,7 +159,7 @@ export class Dropdown {
         });
     }
 
-    clickHandler = e => {
+    dropdownClickHandler = e => {
         const $target = $(e.target);
 
         if ($target.closest(this.$resetBtn).length) {
@@ -170,15 +173,14 @@ export class Dropdown {
             } else {
                 this.showList();
             }
-            return;
         }
+    };
 
-        if ($target.closest(this.$listItems).length) {
-            const $li = $target.closest(this.$listItems);
+    listClickHandler = () => {
+        const $li = $target.closest(this.$listItems);
 
-            this.set($li.text());
-            this.hideList();
-        }
+        this.set($li.text());
+        this.hideList();
     };
 
     outerClickHandler = e => {
@@ -321,6 +323,7 @@ export class Dropdown {
             this.changeLabel(this.activeField.label);
         }
 
+        this.$dropdown.addClass(this.classNames.selected);
         this.fillUpList();
     }
 
@@ -330,6 +333,7 @@ export class Dropdown {
 
     reset() {
         this.activeField = null;
+        this.$dropdown.removeClass(this.classNames.selected);
         this.changeLabel(null);
         this.fillUpList();
     }
