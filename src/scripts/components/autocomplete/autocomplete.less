@@ -1,14 +1,22 @@
 .autocomplete__list {
+  display: none;
   position: absolute;
-  background-color: #fff;
-  list-style: none;
-  margin-top: 0;
-  padding-left: 10px;
   z-index: 50;
+  min-width: 200px;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  background-color: #fff;
+  color: #666;
+  border: 1px solid #e5e5e5;
+  box-sizing: border-box;
+
+
 
   li {
     padding: 5px;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #e5e5e5;
     cursor: pointer;
 
     &:hover {
