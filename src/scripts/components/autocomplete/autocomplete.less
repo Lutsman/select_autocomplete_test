@@ -1,0 +1,26 @@
+.autocomplete-list {
+  position: absolute;
+  background-color: #fff;
+  list-style: none;
+  margin-top: 0;
+  padding-left: 10px;
+  z-index: 50;
+
+  li {
+    padding: 5px;
+    border-bottom: 1px solid #000;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darken(#fff, 10%);
+    }
+
+    span {
+      color: blue;
+    }
+  }
+
+  li:last-child {
+    border-bottom: none;
+  }
+}
