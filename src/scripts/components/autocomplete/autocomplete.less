@@ -11,25 +11,24 @@
   color: #666;
   border: 1px solid #e5e5e5;
   box-sizing: border-box;
-
-
+  overflow-y: auto;
 
   > li {
     padding: 5px 10px;
     border-bottom: 1px solid #e5e5e5;
     cursor: pointer;
-    transition: color, background-color 0.1s ease-in-out;
+    transition: color, background-color, border 0.1s ease-in-out;
 
     &:hover {
       background-color: darken(#fff, 10%);
     }
 
+    &:last-child {
+      border-bottom: none;
+    }
+
     span {
       color: blue;
     }
-  }
-
-  li:last-child {
-    border-bottom: none;
   }
 }

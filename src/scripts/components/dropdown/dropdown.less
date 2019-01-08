@@ -49,10 +49,12 @@
   color: #666;
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
+  overflow-y: auto;
 
   > li {
     padding: 5px 10px;
     cursor: pointer;
+    transition: color, background-color, border 0.1s ease-in-out;
 
     &:hover {
       background-color: #e5e5e5;
