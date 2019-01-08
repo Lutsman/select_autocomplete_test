@@ -3,8 +3,8 @@ export class Dropdown {
         this.userFields = options.fields || null; // [{ label: string, value: any}]
         this.fields = []; // [{ label: string, value: any}]
         this.activeField = null;
-        this.parent = options.parent;
-        this.$parent = null;
+        this.target = options.target;
+        this.$target = null;
         this.$select = null;
         this.isWorking = false;
         this.isDestroyed = false;
@@ -49,8 +49,8 @@ export class Dropdown {
 
     bindElements() {
         this.$body = $('body');
-        this.$parent = $(this.parent);
-        this.$select = this.$parent.is('select') ? this.$parent : null;
+        this.$target = $(this.target);
+        this.$select = this.$target.is('select') ? this.$target : null;
     }
 
     attachHandlers() {
@@ -65,10 +65,10 @@ export class Dropdown {
     }
 
     renderDropdown() {
-        this.$dropdown = $(`<div class="${this.classNames.dropdown} ${this.userDropdownClass}"></div>`);
+        this.$dropdown = $(`<div class="${this.classNames.dropdown} ${this.userDropdownClass || ''}"></div>`);
         this.$label = $(`<div class="${this.classNames.label}"></div>`);
         this.$resetBtn = $(`<div class="${this.classNames.resetBtn}"></div>`);
-        this.$list = $(`<ul class="${this.classNames.list} ${this.userListClass}"></ul>`);
+        this.$list = $(`<ul class="${this.classNames.list} ${this.userListClass || ''}"></ul>`);
 
         this.$dropdown
             .append(this.$label)
@@ -83,7 +83,7 @@ export class Dropdown {
                 .appendTo(this.$dropdown)
                 .hide();
         } else {
-            this.$parent.append(this.$dropdown);
+            this.$target.append(this.$dropdown);
         }
     }
 
@@ -126,7 +126,7 @@ export class Dropdown {
     setListPosition() {
         const dropdownPos = this.getPosition(this.$dropdown);
         const maxHeight = this.getMaxHeight(dropdownPos.bottom);
-        const minWidth = this.$dropdown.width();
+        const minWidth = this.$dropdown.outerWidth();
 
         this.$list.css({
             top: dropdownPos.bottom,
@@ -275,13 +275,26 @@ export class Dropdown {
         return processedFields;
     }
 
-    changeLabel(text) {
-        this.$label.text(text);
+    changeLabel() {
+        let label;
+        let value;
+
+        if (!this.activeField) {
+            label = null;
+            value = null;
+        } else {
+            label = this.activeField.label;
+            value = this.activeField.value;
+        }
+
+        this.$label.text(label);
         this.$dropdown.addClass(this.classNames.selected);
-        this.$dropdown.trigger(this.events.change, {field: this.activeField});
+        this.$dropdown.trigger(this.events.change, {field: label ? {label, value} : null});
         if (this.$select) {
-            this.$select[0].value = text;
-            this.$select.trigger(this.events.change, {field: this.activeField});
+            const select = this.$select[0];
+
+            select.value = value ? value : select.defaultSelected;
+            this.$select.trigger(this.events.change, {field: label ? {label, value} : null});
         }
     }
 
@@ -290,36 +303,85 @@ export class Dropdown {
 
         return {
             top: box.top,
-            bottom: box.top + $el.height(),
+            bottom: box.top + $el.outerHeight(),
             left: box.left,
-            right: box.left + $el.width(),
+            right: box.left + $el.outerWidth(),
         };
     }
 
     getMaxHeight(top) {
         const $win = $(window);
-        return $win.height() - top - $win.scrollTop();
+        return $win.height() - (top - $win.scrollTop());
     }
 
-    isNumeric(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
+    removeSelectOption(label) {
+        const select = this.$select[0];
+        let index = null;
+
+        for(let i = 0; i < select.length; i++) {
+            if (select[i] !== label) continue;
+
+            index = i;
+        }
+
+        if (index === null) return;
+
+        select.remove(index);
     }
 
-    add(newField) {
-        if (typeof newField !== 'object' || !('label' in newField) || !('value' in newField)) return;
+    add(label, value) {
+        if (!label || !value) return;
 
-        let fields = [...this.fields];
+        let replaced = false;
+        let fields = this.fields.map(field => {
+            if (field.label === label) {
+                replaced = true;
+                return {label, value};
+            } else {
+                return field;
+            }
+        });
 
-        fields.push(newField);
+        if (!replaced) {
+            fields.push({label, value});
+        }
+
         this.fields = this.sortFields(fields);
         this.fillUpList();
 
         if(this.$select) {
             const select = this.$select[0];
-            const option = `<option value="${newField.value}">${newField.label}</option>`;
+            const option = $(`<option value="${value}">${label}</option>`)[0];
+
+            if (replaced) {
+                this.removeSelectOption(label);
+            }
 
             select.add(option);
         }
+    }
+
+    set(label, value) {
+        if (!label && !value) return;
+
+        if (label && value) {
+            this.add(label, value);
+            this.set(label);
+        } else if (label) {
+            const activeField = this.fields.filter(item => item.label === label)[0];
+            if (!activeField) return;
+
+            this.activeField = activeField;
+            this.changeLabel(activeField.label);
+        } else if (value) {
+            const activeField = this.fields.filter(item => item.value === value)[0];
+            if (!activeField) return;
+
+            this.activeField = activeField;
+            this.changeLabel(activeField.label);
+        }
+
+        this.fillUpList();
     }
 
     remove(label) {
@@ -336,47 +398,12 @@ export class Dropdown {
         this.fields = processedFields;
 
         if(this.$select) {
-            const select = this.$select[0];
-            let index = null;
-
-            for(let i = 0; i < select.length; i++) {
-                if (select[i] !== label) continue;
-
-                index = i;
-            }
-
-            if (index === null) return;
-
-            select.remove(index);
+            this.removeSelectOption(label);
         }
-    }
-
-    set(val) {
-        if (!val) return;
-
-        if (typeof val === 'object') {
-            if ('label' in val && 'value' in val) return;
-
-            this.add(val);
-            this.set(val.label);
-        } else if (typeof val === 'string') {
-            const activeField = this.fields.filter(item => item.label === val)[0];
-            if (!activeField) return;
-
-            this.activeField = activeField;
-            this.changeLabel(activeField.label);
-        } else if (this.isNumeric(val)) {
-            if (val >= 0 && val < this.fields.length) return;
-
-            this.activeField = this.fields.eq(val);
-            this.changeLabel(this.activeField.label);
-        }
-
-        this.fillUpList();
     }
 
     get() {
-        return this.activeField && this.activeField.value; //TODO decide what is better to get label and value or just value?
+        return this.activeField; //TODO decide what is better to get label and value or just value?
     }
 
     reset() {
@@ -391,6 +418,7 @@ export class Dropdown {
 
         if (this.isDestroyed) {
             this.renderDropdown();
+            this.fillUpList();
             this.isDestroyed = false;
         }
 
@@ -421,9 +449,9 @@ export class Dropdown {
 
         return this.stop()
             .then(() => {
-                this.removeDropdown();
                 this.isDestroyed = true;
                 this.$dropdown.trigger(this.events.destroy, {controller: this});
+                this.removeDropdown();
                 if (this.$select) {
                     this.$select.trigger(this.events.destroy, {controller: this});
                 }

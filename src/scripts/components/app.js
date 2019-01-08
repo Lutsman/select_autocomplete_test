@@ -54,23 +54,38 @@ $(function() {
         const $stopBtn = $wrapper.find('.stop-btn');
         const $destroyBtn = $wrapper.find('.destroy-btn');
         const $setBtn = $wrapper.find('.set-btn');
-        const $setInput = $wrapper.find('.set-input');
+        const $setLabelInput = $wrapper.find('.set-label-input');
+        const $setValueInput = $wrapper.find('.set-value-input');
+        const $addBtn = $wrapper.find('.add-btn');
+        const $addLabelInput = $wrapper.find('.add-label-input');
+        const $addValueInput = $wrapper.find('.add-value-input');
         const $getBtn = $wrapper.find('.get-btn');
 
         $startBtn.on('click', () => dropdown.start());
         $stopBtn.on('click', () => dropdown.stop());
         $destroyBtn.on('click', () => dropdown.destroy());
-        $setBtn.on('click', () => dropdown.set($setInput.val()));
+        $setBtn.on('click', () => {
+            const label = $setLabelInput.val();
+            const value = $setValueInput.val();
+
+            dropdown.set(label, value);
+        });
+        $addBtn.on('click', () => {
+            const label = $addLabelInput.val();
+            const value = $addValueInput.val();
+
+            dropdown.add(label, value);
+        });
         $getBtn.on('click', () => console.log(dropdown.get()));
 
         $target.on({
-            'autocomplete:init': () => console.log('init'),
-            'autocomplete:start': () => console.log('start'),
-            'autocomplete:stop': () => console.log('stop'),
-            'autocomplete:destroy': () => console.log('destroy'),
-            'autocomplete:change': (e, val) => console.log('change', val),
-            'autocomplete:list:shown': () => console.log('list shown'),
-            'autocomplete:list:hidden': () => console.log('list hidden'),
+            'dropdown:init': () => console.log('init'),
+            'dropdown:start': () => console.log('start'),
+            'dropdown:stop': () => console.log('stop'),
+            'dropdown:destroy': () => console.log('destroy'),
+            'dropdown:change': (e, val) => console.log('change', val),
+            'dropdown:list:shown': () => console.log('list shown'),
+            'dropdown:list:hidden': () => console.log('list hidden'),
         });
 
         console.dir(dropdown);
@@ -87,14 +102,39 @@ $(function() {
         const $stopBtn = $wrapper.find('.stop-btn');
         const $destroyBtn = $wrapper.find('.destroy-btn');
         const $setBtn = $wrapper.find('.set-btn');
-        const $setInput = $wrapper.find('.set-input');
+        const $setLabelInput = $wrapper.find('.set-label-input');
+        const $setValueInput = $wrapper.find('.set-value-input');
+        const $addBtn = $wrapper.find('.add-btn');
+        const $addLabelInput = $wrapper.find('.add-label-input');
+        const $addValueInput = $wrapper.find('.add-value-input');
         const $getBtn = $wrapper.find('.get-btn');
 
         $startBtn.on('click', () => dropdown.start());
         $stopBtn.on('click', () => dropdown.stop());
         $destroyBtn.on('click', () => dropdown.destroy());
-        $setBtn.on('click', () => dropdown.set($setInput.val()));
+        $setBtn.on('click', () => {
+            const label = $setLabelInput.val();
+            const value = $setValueInput.val();
+
+            dropdown.set(label, value);
+        });
+        $addBtn.on('click', () => {
+            const label = $addLabelInput.val();
+            const value = $addValueInput.val();
+
+            dropdown.add(label, value);
+        });
         $getBtn.on('click', () => console.log(dropdown.get()));
+
+        $target.on({
+            'dropdown:init': () => console.log('init'),
+            'dropdown:start': () => console.log('start'),
+            'dropdown:stop': () => console.log('stop'),
+            'dropdown:destroy': () => console.log('destroy'),
+            'dropdown:change': (e, val) => console.log('change', val),
+            'dropdown:list:shown': () => console.log('list shown'),
+            'dropdown:list:hidden': () => console.log('list hidden'),
+        });
 
         console.dir(dropdown);
     })();

@@ -75,7 +75,7 @@ export class Autocomplete {
     setListPosition() {
         const inputPos = this.getPosition(this.$searchInput);
         const maxHeight = this.getMaxHeight(inputPos.bottom);
-        const minWidth = this.$searchInput.width();
+        const minWidth = this.$searchInput.outerWidth();
 
         this.$autocompleteList.css({
             top: inputPos.bottom,
@@ -168,15 +168,15 @@ export class Autocomplete {
 
         return {
             top: box.top,
-            bottom: box.top + $el.height(),
+            bottom: box.top + $el.outerHeight(),
             left: box.left,
-            right: box.left + $el.width(),
+            right: box.left + $el.outerWidth(),
         };
     }
 
     getMaxHeight(top) {
         const $win = $(window);
-        return $win.height() - top - $win.scrollTop();
+        return $win.height() - (top - $win.scrollTop());
     }
 
     getFormatedData() {
