@@ -10,12 +10,12 @@ export class Dropdown {
         this.isDestroyed = false;
         this.isShownList = false;
         this.isOuterClickHandled = false;
+        this.userDropdownClass = options.dropdownClass || null;
+        this.userListClass = options.listClass || null;
         this.classNames = {
-            outerWrapper: 'dropdown__outer-wrapper',
-            innerWrapper: 'dropdown__inner-wrapper',
+            dropdown: 'dropdown_wrapper',
             label: 'dropdown__label',
-            activeList: 'dropdown_selected',
-            openBtn: 'dropdown__open-btn',
+            active: 'dropdown__active',
             resetBtn: 'dropdown__reset-btn',
             list: 'dropdown__list',
         };
@@ -40,7 +40,7 @@ export class Dropdown {
         this.fillUpList();
 
         this.isWorking = true;
-        this.$outerWrapper.trigger(this.events.init, {controller: this});
+        this.$dropdown.trigger(this.events.init, {controller: this});
     }
 
     bindElements() {
@@ -50,39 +50,51 @@ export class Dropdown {
     }
 
     attachHandlers() {
-        this.$outerWrapper.on('click', this.clickHandler);
+        this.$dropdown.on('click', this.clickHandler);
     }
 
     detachHandlers() {
-        this.$outerWrapper.off('click', this.clickHandler);
+        this.$dropdown.off('click', this.clickHandler);
         this.$body.off('click', this.outerClickHandler);
     }
 
     renderDropdown() {
-        this.$outerWrapper = $(`<div class="${this.classNames.outerWrapper}"></div>`);
-        this.$innerWrapper = $(`<div class="${this.classNames.innerWrapper}"></div>`);
+        this.$dropdown = $(`<div class="${this.classNames.dropdown} ${this.userDropdownClass}"></div>`);
         this.$label = $(`<div class="${this.classNames.label}"></div>`);
-        this.$resetBtn = $(`<div class="${this.classNames.resetBtn}">reset</div>`);
-        this.$openBtn = $(`<div class="${this.classNames.openBtn}">open</div>`);
-        this.$list = $(`<ul class="${this.classNames.list}"></ul>`);
+        this.$resetBtn = $(`<div class="${this.classNames.resetBtn}"></div>`);
+        this.$list = $(`<ul class="${this.classNames.list} ${this.userListClass}"></ul>`);
 
-        this.$innerWrapper
+        this.$dropdown
             .append(this.$label)
-            .append(this.$resetBtn)
-            .append(this.$openBtn);
+            .append(this.$resetBtn);
 
-        this.$outerWrapper
-            .append(this.$innerWrapper)
+        this.$body
             .append(this.$list);
 
         if (this.$select && this.$select.length) {
             this.$select
-                .replaceWith(this.$outerWrapper)
-                .appendTo(this.$outerWrapper)
+                .replaceWith(this.$dropdown)
+                .appendTo(this.$dropdown)
                 .hide();
         } else {
-            this.$parent.append(this.$outerWrapper);
+            this.$parent.append(this.$dropdown);
         }
+    }
+
+    removeDropdown() {
+        if (this.$select && this.$select.length) {
+            this.$dropdown.replaceWith(this.$select);
+            this.$select.show();
+        } else {
+            this.$dropdown.remove();
+        }
+
+        this.$list.remove();
+        this.$dropdown = null;
+        this.$label = null;
+        this.$resetBtn = null;
+        this.$list = null;
+        this.$listItems = null;
     }
 
     renderListItems(fields) {
@@ -116,13 +128,13 @@ export class Dropdown {
 
     showList(ms) {
         return new Promise(resolve => {
-            // this.setListPosition();
+            this.setListPosition();
             this.$list.fadeIn(ms || 100, () => {
                 if (!this.isOuterClickHandled) {
                     this.$body.on('click', this.outerClickHandler);
                     this.isOuterClickHandled = true;
                 }
-                this.$openBtn.addClass(this.classNames.activeBtn);
+                this.$dropdown.addClass(this.classNames.active);
                 this.isShownList = true;
                 resolve();
             });
@@ -130,22 +142,18 @@ export class Dropdown {
     }
 
     hideList(ms) {
-        if (this.isOuterClickHandled) {
-            this.$body.off('click', this.outerClickHandler);
-            this.isOuterClickHandled = false;
-        }
         return new Promise(resolve => {
+            if (this.isOuterClickHandled) {
+                this.$body.off('click', this.outerClickHandler);
+                this.isOuterClickHandled = false;
+            }
+
             this.$list.fadeOut(ms || 100, () => {
-                this.$openBtn.removeClass(this.classNames.activeBtn);
+                this.$dropdown.removeClass(this.classNames.active);
                 this.isShownList = false;
                 resolve();
             });
         });
-    }
-
-    removeList() {
-        this.$list.remove();
-        this.$list = null;
     }
 
     clickHandler = e => {
@@ -175,7 +183,7 @@ export class Dropdown {
 
     outerClickHandler = e => {
         const $target = $(e.target);
-        const $wrapper = $target.closest(this.$outerWrapper);
+        const $wrapper = $target.closest(this.$dropdown);
 
         if ($wrapper.length) return;
 
@@ -336,7 +344,7 @@ export class Dropdown {
 
         this.attachHandlers();
         this.isWorking = true;
-        this.$outerWrapper.trigger(this.events.start, {controller: this});
+        this.$dropdown.trigger(this.events.start, {controller: this});
     }
 
     stop() {
@@ -346,7 +354,7 @@ export class Dropdown {
         return this.hideList()
             .then(() => {
                 this.isWorking = false;
-                this.$outerWrapper.trigger(this.events.stop, {controller: this});
+                this.$dropdown.trigger(this.events.stop, {controller: this});
             });
     }
 
@@ -355,9 +363,9 @@ export class Dropdown {
 
         return this.stop()
             .then(() => {
-                this.removeList();
+                this.removeDropdown();
                 this.isDestroyed = true;
-                this.$outerWrapper.trigger(this.events.destroy, {controller: this});
+                this.$dropdown.trigger(this.events.destroy, {controller: this});
             });
     }
 }
