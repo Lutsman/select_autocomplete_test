@@ -13,7 +13,7 @@ export class Dropdown {
         this.userDropdownClass = options.dropdownClass || null;
         this.userListClass = options.listClass || null;
         this.classNames = {
-            dropdown: 'dropdown_wrapper',
+            dropdown: 'dropdown__wrapper',
             label: 'dropdown__label',
             active: 'dropdown__active',
             resetBtn: 'dropdown__reset-btn',
@@ -118,7 +118,7 @@ export class Dropdown {
     }
 
     setListPosition() {
-        const innerWrapperPos = this.getPosition(this.$innerWrapper);
+        const innerWrapperPos = this.getPosition(this.$dropdown);
 
         this.$list.css({
             top: innerWrapperPos.bottom,
