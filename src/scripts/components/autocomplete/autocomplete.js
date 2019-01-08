@@ -30,7 +30,7 @@ export class Autocomplete {
 
     init() {
         this.bindElements();
-        this.preRenderList();
+        this.renderList();
         this.attachHandlers();
         this.formatedData = this.getFormatedData();
 
@@ -54,14 +54,14 @@ export class Autocomplete {
         this.$body.off('click', this.outerClickHandler);
     }
 
-    preRenderList() {
+    renderList() {
         this.$autocompleteList = $(`<ul class="${this.classNames.list}"></ul>`);
         this.$autocompleteList
             .appendTo(this.$body)
             .hide();
     }
 
-    renderList(words) {
+    fillUpList(words) {
         const $list = this.$autocompleteList;
 
         $list.empty();
@@ -128,7 +128,7 @@ export class Autocomplete {
             return;
         }
 
-        this.renderList(purposalWords);
+        this.fillUpList(purposalWords);
         this.showList();
     };
 
@@ -145,8 +145,9 @@ export class Autocomplete {
     outerClickHandler = e => {
         const $target = $(e.target);
         const $list = $target.closest(this.$autocompleteList);
+        const $searchInput = $target.closest(this.$searchInput);
 
-        if ($list.length) return;
+        if ($list.length || $searchInput.length) return;
 
         if (!this.isChoosed) {
             this.reset();
@@ -280,17 +281,12 @@ export class Autocomplete {
     }
 
     set(val) {
-        if (val) {
-            this.changeInputValue(val);
-            this.activeValue = val;
-            this.isChoosed = true;
-            this.$searchInput.trigger(this.events.change, val);
-        } else {
-            this.changeInputValue(null);
-            this.activeValue = null;
-            this.isChoosed = false;
-            this.$searchInput.trigger(this.events.change, null);
-        }
+        if (!val) return;
+
+        this.changeInputValue(val);
+        this.activeValue = val;
+        this.isChoosed = true;
+        this.$searchInput.trigger(this.events.change, val);
     }
 
     get() {
@@ -298,14 +294,17 @@ export class Autocomplete {
     }
 
     reset() {
-        this.set(null);
+        this.changeInputValue(null);
+        this.activeValue = null;
+        this.isChoosed = false;
+        this.$searchInput.trigger(this.events.change, null);
     }
 
     start() {
         if (this.isWorking) return;
 
         if (this.isDestroyed) {
-            this.preRenderList();
+            this.renderList();
             this.isDestroyed = false;
         }
 
