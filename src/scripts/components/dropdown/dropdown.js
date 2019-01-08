@@ -50,11 +50,13 @@ export class Dropdown {
     }
 
     attachHandlers() {
-        this.$dropdown.on('click', this.clickHandler);
+        this.$dropdown.on('click', this.dropdownClickHandler);
+        this.$list.on('click', this.listClickHandler);
     }
 
     detachHandlers() {
-        this.$dropdown.off('click', this.clickHandler);
+        this.$dropdown.off('click', this.dropdownClickHandler);
+        this.$list.off('click', this.listClickHandler);
         this.$body.off('click', this.outerClickHandler);
     }
 
@@ -156,7 +158,7 @@ export class Dropdown {
         });
     }
 
-    clickHandler = e => {
+    dropdownClickHandler = e => {
         const $target = $(e.target);
 
         if ($target.closest(this.$resetBtn).length) {
@@ -170,15 +172,14 @@ export class Dropdown {
             } else {
                 this.showList();
             }
-            return;
         }
+    };
 
-        if ($target.closest(this.$listItems).length) {
-            const $li = $target.closest(this.$listItems);
+    listClickHandler = () => {
+        const $li = $target.closest(this.$listItems);
 
-            this.set($li.text());
-            this.hideList();
-        }
+        this.set($li.text());
+        this.hideList();
     };
 
     outerClickHandler = e => {
